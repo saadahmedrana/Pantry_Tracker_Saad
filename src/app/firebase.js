@@ -1,18 +1,25 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import {getFirestore} from 'firebase/firestore';
 
+// import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCSx2ka2cHD4kOVrfk5p4aHzgdg278mylY",
-  authDomain: "inventorymanagement-aaf5d.firebaseapp.com",
-  projectId: "inventorymanagement-aaf5d",
-  storageBucket: "inventorymanagement-aaf5d.appspot.com",
-  messagingSenderId: "430198761131",
-  appId: "1:430198761131:web:1349fc39c77f1b5d9cf9ee",
-  measurementId: "G-27B5Q40Z3T"
+  apiKey: "AIzaSyAC__QV2BVNsZhJT4FLFNf4ryPsJRFMj3M",
+  authDomain: "inventory-management-by-saad.firebaseapp.com",
+  projectId: "inventory-management-by-saad",
+  storageBucket: "inventory-management-by-saad.appspot.com",
+  messagingSenderId: "691477175773",
+  appId: "1:691477175773:web:bef896a29701b8b8146a34",
+  measurementId: "G-261ZYWKY4G"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
-
-export { firestore };
+const firestore =getFirestore(app);
+  export {firestore};
+// const analytics = getAnalytics(app);
