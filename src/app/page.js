@@ -107,7 +107,7 @@ export default function Home() {
         }}
       >
         <Typography variant={'h4'} color={'#333'} marginBottom={2}>
-          Inventory
+          Your Pantry Items
         </Typography>
         <Box display="flex" width="100%" marginBottom={2}>
           <TextField
