@@ -9,6 +9,7 @@ export default function Home() {
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState('');
+  const [itemQuantity, setItemQuantity] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
   const updateInventory = async () => {
@@ -24,14 +25,14 @@ export default function Home() {
     setInventory(inventoryList);
   };
 
-  const addItem = async (name) => {
-    if (!name) return; // Check for empty item name
+  const addItem = async (name, quantity) => {
+    if (!name || quantity <= 0) return; // Check for empty item name or invalid quantity
     const docRef = doc(collection(firestore, 'inventory'), name);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      await setDoc(docRef, { name: name, quantity: docSnap.data().quantity + 1 });
+      await setDoc(docRef, { name: name, quantity: docSnap.data().quantity + quantity });
     } else {
-      await setDoc(docRef, { name: name, quantity: 1 });
+      await setDoc(docRef, { name: name, quantity: quantity });
     }
     await updateInventory();
   };
@@ -69,7 +70,11 @@ export default function Home() {
     updateInventory();
   }, []);
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setItemName('');
+    setItemQuantity(1);
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
 
   const filteredInventory = inventory.filter(item =>
@@ -80,33 +85,33 @@ export default function Home() {
     <Box
       width="100vw"
       height="100vh"
-      display={'flex'}
-      justifyContent={'flex-start'}
-      alignItems={'flex-start'}
+      display="flex"
+      justifyContent="flex-start"
+      alignItems="flex-start"
       sx={{
         backgroundImage: 'url(/hadi.png)', // Reference image in the public directory
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
-        padding: 3,
+        padding: { xs: 2, sm: 3 },
         overflow: 'hidden', // Ensures that content is cropped
       }}
     >
       <Box
-        width="calc(60% + 20px)" // Adjust width to include the cropped portion
-        display={'flex'}
-        flexDirection={'column'}
-        alignItems={'flex-start'}
+        width={{ xs: '100%', md: '60%' }}
+        display="flex"
+        flexDirection="column"
+        alignItems="flex-start"
         padding={2}
         sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
           borderRadius: 2,
           marginTop: 2,
-          marginLeft: '-20px', // Crop 20px from the left side
+          marginLeft: { xs: 0, md: '-20px' },
           overflow: 'hidden', // Ensure content is clipped
         }}
       >
-        <Typography variant={'h4'} color={'#333'} marginBottom={2}>
+        <Typography variant="h4" color="#333" marginBottom={2}>
           Your Pantry Items
         </Typography>
         <Box display="flex" width="100%" marginBottom={2}>
@@ -127,28 +132,30 @@ export default function Home() {
               <Box
                 key={id}
                 width="100%"
-                display={'flex'}
-                justifyContent={'space-between'}
-                alignItems={'center'}
-                bgcolor={'#f0f0f0'}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                bgcolor="#f0f0f0"
                 padding={2}
                 borderRadius={2}
                 boxShadow={2}
               >
                 <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
-                  <Typography variant={'h6'} color={'#333'}>
+                  <Typography variant="h6" color="#333" flex="1">
                     {name.charAt(0).toUpperCase() + name.slice(1)}
                   </Typography>
-                  <Typography variant={'h6'} color={'#333'}>
+                  <Typography variant="h6" color="#333" width="120px" textAlign="right">
                     Quantity: {quantity}
                   </Typography>
-                  <Box display="flex" alignItems="center" gap={1}>
+                  <Box display="flex" alignItems="center" gap={1} marginLeft={2}>
                     <Button variant="outlined" onClick={() => incrementItem(name)}>+</Button>
                     <Button variant="outlined" onClick={() => decrementItem(name)}>-</Button>
                   </Box>
-                  <Button variant="contained" color="error" onClick={() => removeItem(name)}>
-                    Remove
-                  </Button>
+                  <Box marginLeft={2}>
+                    <Button variant="contained" color="error" onClick={() => removeItem(name)}>
+                      Remove
+                    </Button>
+                  </Box>
                 </Box>
               </Box>
             ))}
@@ -166,7 +173,7 @@ export default function Home() {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 400,
+          width: { xs: '80%', sm: 400 },
           bgcolor: 'background.paper',
           border: 'none',
           boxShadow: 24,
@@ -176,7 +183,7 @@ export default function Home() {
           <Typography id="modal-modal-title" variant="h6" component="h2" marginBottom={2}>
             Add Item
           </Typography>
-          <Stack width="100%" direction={'row'} spacing={2}>
+          <Stack width="100%" direction="row" spacing={2} marginBottom={2}>
             <TextField
               id="outlined-basic"
               label="Item"
@@ -185,17 +192,28 @@ export default function Home() {
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
             />
-            <Button
-              variant="contained"
-              onClick={() => {
-                addItem(itemName);
-                setItemName('');
-                handleClose();
-              }}
-            >
-              Add
-            </Button>
+            <TextField
+              id="outlined-quantity"
+              label="Quantity"
+              variant="outlined"
+              type="number"
+              fullWidth
+              value={itemQuantity}
+              onChange={(e) => setItemQuantity(Number(e.target.value))}
+            />
           </Stack>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => {
+              addItem(itemName, itemQuantity);
+              setItemName('');
+              setItemQuantity(1);
+              handleClose();
+            }}
+          >
+            Add
+          </Button>
         </Box>
       </Modal>
     </Box>
